@@ -9,7 +9,6 @@ import com.massey.journey.Journey;
 public class MainMenuScreen implements Screen {
 
     Journey game;
-    Texture 
 
     public MainMenuScreen(Journey game) {
         this.game = game;
