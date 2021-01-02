@@ -31,7 +31,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-
+1234567
     }
 
     @Override
