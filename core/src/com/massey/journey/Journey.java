@@ -5,8 +5,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.massey.journey.screens.MainGameScreen;
 
 public class Journey extends Game {
-	public static final int SCREEN_WIDTH = 720;
-	public static final int SCREEN_HEIGHT = 480;
+	public static final int SCREEN_WIDTH = 400;
+	public static final int SCREEN_HEIGHT = 320;
+	public static final float PPM = 100;
 	public SpriteBatch batch;
 
 	@Override

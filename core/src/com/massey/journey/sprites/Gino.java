@@ -6,10 +6,11 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.massey.journey.Journey;
 
 public class Gino extends Sprite {
     public World world;
-    public Body body;
+    public Body b2body;
 
     public Gino(World world) {
         this.world = world;
@@ -18,15 +19,15 @@ public class Gino extends Sprite {
 
     public void defineGino() {
         BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set(32, 32);
+        bodyDef.position.set(50 / Journey.PPM, 250 / Journey.PPM);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        body = world.createBody(bodyDef);
+        b2body = world.createBody(bodyDef);
 
         FixtureDef fixtureDef = new FixtureDef();
         CircleShape circleShape = new CircleShape();
-        circleShape.setRadius(5);
+        circleShape.setRadius(5 / Journey.PPM);
 
         fixtureDef.shape = circleShape;
-        body.createFixture(fixtureDef);
+        b2body.createFixture(fixtureDef);
     }
 }
