@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -29,7 +30,11 @@ import static com.massey.journey.Journey.SCREEN_HEIGHT;
 
 public class MainGameScreen implements Screen {
 
+    //Reference to the game, used to set Screens
     private Journey game;
+    private TextureAtlas atlas;
+
+    //basic game screen variables
     private OrthographicCamera gameCam;
     private Viewport gamePort;
     private Hud hud;
@@ -46,6 +51,8 @@ public class MainGameScreen implements Screen {
 
     //constructor
     public MainGameScreen(Journey game) {
+        atlas = new TextureAtlas("Texture Pack.atlas");
+
         this.game = game;
         //Setup a game camera
         gameCam = new OrthographicCamera();
@@ -71,7 +78,11 @@ public class MainGameScreen implements Screen {
 
         new B2WorldCreator(world, map);
 
-        gino = new Gino(world);
+        gino = new Gino(world, this);
+    }
+
+    public TextureAtlas getAtlas() {
+        return atlas;
     }
 
     @Override
@@ -94,7 +105,10 @@ public class MainGameScreen implements Screen {
     public void update(float deltaTime) {
         handleInput(deltaTime);
 
-        world.step(1 / 60f, 6, 2);
+        world.step(1 / 60f, 5, 1);
+
+        gino.update(deltaTime);
+
         gameCam.position.x = gino.b2body.getPosition().x;
         gameCam.position.y = gino.b2body.getPosition().y;
         gameCam.update();
@@ -114,6 +128,11 @@ public class MainGameScreen implements Screen {
 
         //render Box2DDebugLines
         box2DDebugRenderer.render(world, gameCam.combined);
+
+        game.batch.setProjectionMatrix(gameCam.combined);
+        game.batch.begin();
+        gino.draw(game.batch);
+        game.batch.end();
 
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
