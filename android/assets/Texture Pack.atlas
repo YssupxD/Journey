@@ -1,0 +1,62 @@
+
+Texture Pack.png
+size: 2048,512
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Gino
+  rotate: false
+  xy: 0, 256
+  size: 2048, 256
+  orig: 2048, 256
+  offset: 0, 0
+  index: -1
+destr_effect_sheet
+  rotate: false
+  xy: 1536, 48
+  size: 400, 80
+  orig: 400, 80
+  offset: 0, 0
+  index: -1
+enemy01_sheet
+  rotate: false
+  xy: 0, 0
+  size: 640, 32
+  orig: 640, 32
+  offset: 0, 0
+  index: -1
+enemy02_sheet
+  rotate: false
+  xy: 0, 32
+  size: 960, 32
+  orig: 960, 32
+  offset: 0, 0
+  index: -1
+enemy03_sheet
+  rotate: false
+  xy: 0, 128
+  size: 1728, 64
+  orig: 1728, 64
+  offset: 0, 0
+  index: -1
+enemy04_sheet
+  rotate: false
+  xy: 0, 192
+  size: 1792, 64
+  orig: 1792, 64
+  offset: 0, 0
+  index: -1
+enemy05_sheet
+  rotate: false
+  xy: 0, 64
+  size: 1536, 64
+  orig: 1536, 64
+  offset: 0, 0
+  index: -1
+hit_effect_sheet
+  rotate: false
+  xy: 640, 0
+  size: 160, 32
+  orig: 160, 32
+  offset: 0, 0
+  index: -1

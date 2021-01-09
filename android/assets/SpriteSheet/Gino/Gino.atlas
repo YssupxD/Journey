@@ -1,0 +1,62 @@
+
+Gino.png
+size: 2048,256
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+attack_in_jump_sheet
+  rotate: false
+  xy: 0, 0
+  size: 448, 64
+  orig: 448, 64
+  offset: 0, 0
+  index: -1
+attacks_sheet
+  rotate: false
+  xy: 0, 192
+  size: 1728, 64
+  orig: 1728, 64
+  offset: 0, 0
+  index: -1
+hit,death_sheet
+  rotate: false
+  xy: 0, 64
+  size: 512, 64
+  orig: 512, 64
+  offset: 0, 0
+  index: -1
+idle,run,jump_sheet
+  rotate: false
+  xy: 0, 128
+  size: 1536, 64
+  orig: 1536, 64
+  offset: 0, 0
+  index: -1
+ledge_grab_sheet
+  rotate: false
+  xy: 1728, 192
+  size: 320, 64
+  orig: 320, 64
+  offset: 0, 0
+  index: -1
+slide_sheet
+  rotate: false
+  xy: 512, 64
+  size: 320, 64
+  orig: 320, 64
+  offset: 0, 0
+  index: -1
+throw_attack_sheet
+  rotate: false
+  xy: 448, 0
+  size: 448, 64
+  orig: 448, 64
+  offset: 0, 0
+  index: -1
+throw_dagger_sheet
+  rotate: false
+  xy: 1536, 176
+  size: 60, 16
+  orig: 60, 16
+  offset: 0, 0
+  index: -1
