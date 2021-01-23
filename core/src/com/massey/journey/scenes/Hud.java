@@ -16,21 +16,21 @@ public class Hud implements Disposable {
     public Stage stage;
     private Viewport viewport;
 
-    private Integer worldTimer;
-    private float timeCount;
-    private Integer score;
+    public static Integer daggerCounter;
+    public static float timeCount;
+    public static Integer hpCounter;
 
     Label countdownLabel;
-    Label diamondLabel;
+    Label lifepointLabel;
     Label daggerLabel;
     Label levelLabel;
     Label worldLabel;
     Label ginoLabel;
 
     public Hud(SpriteBatch sb) {
-        worldTimer = 500;
+        daggerCounter = 0;
         timeCount = 0;
-        score = 0;
+        hpCounter = 100;
 
         viewport = new FitViewport(Journey.SCREEN_WIDTH, Journey.SCREEN_HEIGHT, new OrthographicCamera());
         //
@@ -42,8 +42,10 @@ public class Hud implements Disposable {
         //table is now size of the stage;
         table.setFillParent(true);
 
-        countdownLabel = new Label(String.format("%03d", worldTimer), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        diamondLabel = new Label(String.format("%06d", score), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        countdownLabel = new Label(String.format("%02d", daggerCounter),
+                new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        lifepointLabel = new Label("HP " + String.format("%03d", hpCounter),
+                new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         daggerLabel = new Label("Dagger", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         levelLabel = new Label("1", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         worldLabel = new Label("LEVEL", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
@@ -53,7 +55,7 @@ public class Hud implements Disposable {
         table.add(worldLabel).expandX().padTop(10);
         table.add(daggerLabel).expandX().padTop(10);
         table.row();
-        table.add(diamondLabel).expandX();
+        table.add(lifepointLabel).expandX();
         table.add(levelLabel).expandX();
         table.add(countdownLabel). expandX();
 
