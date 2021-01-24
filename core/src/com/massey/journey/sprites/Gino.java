@@ -2,7 +2,6 @@ package com.massey.journey.sprites;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -13,30 +12,28 @@ import com.badlogic.gdx.utils.Array;
 import com.massey.journey.Journey;
 import com.massey.journey.screens.MainGameScreen;
 
+import sun.applet.Main;
+
 public class Gino extends Sprite {
-    public enum State { JUMPING, IDLING, FALLING, SLIDING, RUNNING, ATTACKING, GRABBING, THROWING, DIEING, GETTING_HIT, ATTACK_IN_JUMPING }
+    public enum State { JUMPING, IDLING, FALLING, RUNNING, THROWING, DIEING, GETTING_HIT }
     public State currentState;
     public State previousState;
     public World world;
     public Body b2body;
     private TextureRegion ginoStand;
 
+
     //Animation variables for the player
     private Animation<TextureRegion> ginoJump;
     private Animation<TextureRegion> ginoIdle;
     private Animation<TextureRegion> ginoFall;
-    private Animation<TextureRegion> ginoSlide;
     private Animation<TextureRegion> ginoRun;
-    private Animation<TextureRegion> ginoAttack;
-    private Animation<TextureRegion> ginoGrab;
     private Animation<TextureRegion> ginoThrow;
     private Animation<TextureRegion> ginoDie;
     private Animation<TextureRegion> ginoGetHit;
-    private Animation<TextureRegion> ginoAttackInJump;
 
-    //
     private float stateTimer;
-    //
+
     private boolean runningRight;
 
     public Gino(World world, MainGameScreen screen) {
@@ -74,11 +71,22 @@ public class Gino extends Sprite {
             frames.add(new TextureRegion(getTexture(), i * 64, 384, 64, 64));
         }
         ginoFall = new Animation(0.1f, frames);
+        frames.clear();
+
+        for(int i = 7; i < 13; i++) {
+            frames.add(new TextureRegion(getTexture(), i * 64, 256, 64, 64));
+        }
+        ginoThrow = new Animation(0.1f, frames);
+        frames.clear();
+
 
         defineGino();
+
+
     }
 
     public void update(float deltaTime) {
+
         if(runningRight) {
             setPosition(b2body.getPosition().x - getWidth() / 3, b2body.getPosition().y - getHeight() / 3);
         }
@@ -93,7 +101,7 @@ public class Gino extends Sprite {
         TextureRegion region;
         switch (currentState) {
             case JUMPING:
-                region = ginoJump.getKeyFrame(stateTimer);
+                region = ginoJump.getKeyFrame(stateTimer, true);
                 break;
             case RUNNING:
                 region = ginoRun.getKeyFrame(stateTimer, true);
@@ -101,9 +109,12 @@ public class Gino extends Sprite {
             case FALLING:
                 region = ginoFall.getKeyFrame(stateTimer);
                 break;
+            case THROWING:
+                region = ginoThrow.getKeyFrame(stateTimer);
+                break;
             case IDLING:
             default:
-                region = ginoIdle.getKeyFrame(stateTimer);
+                region = ginoIdle.getKeyFrame(stateTimer, true);
                 break;
         }
         if((b2body.getLinearVelocity().x < 0 || !runningRight) && !region.isFlipX()) {
@@ -123,18 +134,22 @@ public class Gino extends Sprite {
         if(b2body.getLinearVelocity().y > 0) {
             return State.JUMPING;
         }
-        else if(b2body.getLinearVelocity().x != 0) {
+        else if(b2body.getLinearVelocity().x != 0 && b2body.getLinearVelocity().y == 0) {
             return State.RUNNING;
         }
-        else if(b2body.getLinearVelocity().y < 0 ) {
+        else if(b2body.getLinearVelocity().y < 0) {
             return State.FALLING;
         }
         else if(b2body.getLinearVelocity().x == 0 && b2body.getLinearVelocity().y == 0){
             return State.IDLING;
         }
-        else {
+        else if(b2body.getPosition().y < 0){
             return State.DIEING;
         }
+        else if(b2body.getLinearVelocity().x != 0) {
+            return State.THROWING;
+        }
+        else { return State.IDLING; }
     }
 
     public void defineGino() {
