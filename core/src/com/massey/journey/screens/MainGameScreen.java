@@ -18,6 +18,7 @@ import com.massey.journey.Journey;
 import com.massey.journey.scenes.Hud;
 import com.massey.journey.sprites.Gino;
 import com.massey.journey.Utils.B2WorldCreator;
+import static com.massey.journey.Utils.Box2dVariables.PPM;
 
 public class MainGameScreen implements Screen {
 
@@ -52,7 +53,8 @@ public class MainGameScreen implements Screen {
         gameCam = new OrthographicCamera();
 
         //Fitviewport doesn't change the aspect ratio, adding black bars to screen
-        gamePort = new FitViewport(Journey.SCREEN_WIDTH / Journey.PPM, Journey.SCREEN_HEIGHT / Journey.PPM, gameCam);
+        gamePort = new FitViewport(Journey.VIRTUAL_WIDTH / PPM, Journey.VIRTUAL_HEIGHT / PPM,
+                gameCam);
 
         //create game HUD for game info.
         hud = new Hud(game.batch);
@@ -60,7 +62,7 @@ public class MainGameScreen implements Screen {
         //Load and setup map render.
         mapLoader = new TmxMapLoader();
         map = mapLoader.load("level1.tmx");
-        renderer = new OrthogonalTiledMapRenderer(map, 1 / Journey.PPM);
+        renderer = new OrthogonalTiledMapRenderer(map, 1 / PPM);
 
         //set game camera to be centered when the game starts
         gameCam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2, 0);
@@ -70,7 +72,7 @@ public class MainGameScreen implements Screen {
         //allows for debug lines of game world
         box2DDebugRenderer = new Box2DDebugRenderer();
 
-        new B2WorldCreator(world, map);
+        new B2WorldCreator(world, map, 7);
 
         gino = new Gino(world, this);
     }

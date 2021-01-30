@@ -6,9 +6,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 
-public class Dagger extends InteractiveTileObject {
-    public Dagger(World world, TiledMap map, Rectangle bounds) {
-        super(world, map, bounds);
-        //BodyDef
-    }
+public class Dagger {
+
 }

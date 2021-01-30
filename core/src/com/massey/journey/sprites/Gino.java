@@ -1,5 +1,7 @@
 package com.massey.journey.sprites;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -11,8 +13,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.massey.journey.Journey;
 import com.massey.journey.screens.MainGameScreen;
-
-import sun.applet.Main;
+import static com.massey.journey.Utils.Box2dVariables.PPM;
 
 public class Gino extends Sprite {
     public enum State { JUMPING, IDLING, FALLING, RUNNING, THROWING, DIEING, GETTING_HIT }
@@ -32,7 +33,7 @@ public class Gino extends Sprite {
     private Animation<TextureRegion> ginoDie;
     private Animation<TextureRegion> ginoGetHit;
 
-    private float stateTimer;
+    private float stateTime;
 
     private boolean runningRight;
 
@@ -41,11 +42,11 @@ public class Gino extends Sprite {
         this.world = world;
         currentState = State.IDLING;
         previousState = State.IDLING;
-        stateTimer = 0;
+        stateTime = 0;
         runningRight = true;
 
         ginoStand = new TextureRegion(getTexture(), 0, 384, 64, 64);
-        setBounds(0, 0, 64 / Journey.PPM, 64 / Journey.PPM);
+        setBounds(0, 0, 64 / PPM, 64 / PPM);
         setRegion(ginoStand);
 
         Array<TextureRegion> frames = new Array<TextureRegion>();
@@ -101,20 +102,20 @@ public class Gino extends Sprite {
         TextureRegion region;
         switch (currentState) {
             case JUMPING:
-                region = ginoJump.getKeyFrame(stateTimer, true);
+                region = ginoJump.getKeyFrame(stateTime, true);
                 break;
             case RUNNING:
-                region = ginoRun.getKeyFrame(stateTimer, true);
+                region = ginoRun.getKeyFrame(stateTime, true);
                 break;
             case FALLING:
-                region = ginoFall.getKeyFrame(stateTimer);
+                region = ginoFall.getKeyFrame(stateTime);
                 break;
             case THROWING:
-                region = ginoThrow.getKeyFrame(stateTimer);
+                region = ginoThrow.getKeyFrame(stateTime);
                 break;
             case IDLING:
             default:
-                region = ginoIdle.getKeyFrame(stateTimer, true);
+                region = ginoIdle.getKeyFrame(stateTime, true);
                 break;
         }
         if((b2body.getLinearVelocity().x < 0 || !runningRight) && !region.isFlipX()) {
@@ -125,7 +126,12 @@ public class Gino extends Sprite {
             region.flip(true, false);
             runningRight = true;
         }
-        stateTimer = currentState == previousState ? stateTimer + deltaTime : 0;
+        if(currentState == previousState) {
+            stateTime += deltaTime;
+        }
+        else{
+            stateTime = 0;
+        }
         previousState = currentState;
         return region;
     }
@@ -140,8 +146,8 @@ public class Gino extends Sprite {
         else if(b2body.getLinearVelocity().y < 0) {
             return State.FALLING;
         }
-        else if(b2body.getLinearVelocity().x == 0 && b2body.getLinearVelocity().y == 0){
-            return State.IDLING;
+        else if(Gdx.input.isKeyPressed(Input.Keys.J)){
+            return State.THROWING;
         }
         else if(b2body.getPosition().y < 0){
             return State.DIEING;
@@ -154,13 +160,13 @@ public class Gino extends Sprite {
 
     public void defineGino() {
         BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set(50 / Journey.PPM, 250 / Journey.PPM);
+        bodyDef.position.set(50 / PPM, 250 / PPM);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bodyDef);
 
         FixtureDef fixtureDef = new FixtureDef();
         CircleShape circleShape = new CircleShape();
-        circleShape.setRadius(15 / Journey.PPM);
+        circleShape.setRadius(15 / PPM);
 
         fixtureDef.shape = circleShape;
         b2body.createFixture(fixtureDef);

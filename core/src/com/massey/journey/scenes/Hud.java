@@ -32,7 +32,8 @@ public class Hud implements Disposable {
         timeCount = 0;
         hpCounter = 100;
 
-        viewport = new FitViewport(Journey.SCREEN_WIDTH, Journey.SCREEN_HEIGHT, new OrthographicCamera());
+        viewport = new FitViewport(Journey.VIRTUAL_WIDTH, Journey.VIRTUAL_HEIGHT,
+                new OrthographicCamera());
         //
         stage = new Stage(viewport, sb);
 

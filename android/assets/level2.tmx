@@ -8,7 +8,7 @@
  <tileset firstgid="1268" source="rocks.tsx"/>
  <tileset firstgid="4868" source="main_lev_build_2.tsx"/>
  <tileset firstgid="8468" source="main_lev_build_1.tsx"/>
- <layer id="1" name="图块层 1" width="200" height="30">
+ <layer id="1" name="BACKGROUND1" width="200" height="30">
   <data encoding="base64" compression="zlib">
    eJztm9WS3EAMRR1mZmZmZmZm5kw4G/j/p5wHb9WUa+xpqcnjqKvOw+76Nti6arWdFIU1a9bq2gSYCJNgMkyBqTANpsMMmAmzYDbMgbmmNe1/op0H82EBLIRFsBiWwFJYBsthBayEVbC67M+0pu26dg2shXWwHjbARtgEm2ELbIVtsB12wM6yP9OatuvaXbAb9sBe2Af74QAchENwGI7AUTgGx8v+TGvarmtPwEk4BafhDJyFc3AeLsBFuASX4QpcLfszrWm7rr0G1+EG3IRbcBvuwF24B/fhATyER/C47M+0pu269gk8hWfwHF7AS3gFr+ENvIV38B4+wMeyP9OatuvaHnyCz/AFvsI3+A4/4CeMwS/4DX/gb9mfaU3bZq22n/7rtX30BNqe8PpB69a0HGP2j5tr3Zr5auZXR1taiPvu61UX/fg10rFCxNagWA0Zvy79adetQZvrNLpB83aJBc14oTSaZxHCY0399Psj1Z6j1cWoBSRzybFmra76vFyfa6pcGSpXxfaTpibUeKo6pva55/ZHyhhP6Q/fs0EITdf84XPOMn/EPQ9L12f+COOPau73iRmt1vzhfv5I9Uzb7g+XeHOp+Vz68D1X+dZYod9xaHJs2/0hPZf7xKn5Y7g/Ut3TcX80jSnNh130h+Qe53qX5OsPSRsWo3XvJgb97Bp31b+l8kevwjC/tsEfOc72haM+lD98Nbn2j6Z5SO6Ni/9S1Fgu85euS5NbUryH8tl7Cge99F7FqrE0sSBpktweyx856laJ97X7n0+O84lzX18WDtrc9YDPGkPsH01nDmk+DVWnxDzXSfZJTZ2Rwh++dYf5Q+aPut9J6yXtXp3iXFe3Jsmc2uCPULWO+WOwP1yep+ucNLGRwx9Na5Lew1z+0NZ+5o847wNc8moqf4SsI5vOJjn9UQyZd+i61eXfqcbwpDY/5qjNc/kj1B5SF/Ouawoxj5j+8PWu7x4ira9j+UMTM23xhybeQvqjmltixpRLfRoqTlPUoT77Vip/+H4H04zlsme5ejaXP+rWETvnpvBHrHpKsm/FmkPb/eH6vVbiD+keGLqucfV8KH80+THWWcDnDNf/HdJl3Fh1csj/KzUq/hgTXhszb6eqSepygjZmfL9/hNpDYuc53zN6Sn+EXv8o+sMnNw1ayyjUHCH2L993Aqn88Q/eaLYf
   </data>
