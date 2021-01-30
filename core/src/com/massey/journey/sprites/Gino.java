@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.massey.journey.Journey;
+import com.massey.journey.scenes.Hud;
 import com.massey.journey.screens.MainGameScreen;
 import static com.massey.journey.Utils.Box2dVariables.PPM;
 
@@ -80,6 +81,18 @@ public class Gino extends Sprite {
         ginoThrow = new Animation(0.1f, frames);
         frames.clear();
 
+        for(int i = 0; i < 5; i++) {
+            frames.add(new TextureRegion(getTexture(), i * 64, 320, 64, 64));
+        }
+        ginoDie = new Animation(0.1f, frames);
+        frames.clear();
+
+        for(int i = 5; i < 9; i++) {
+            frames.add(new TextureRegion(getTexture(), i * 64, 320, 64, 64));
+        }
+        ginoDie = new Animation(0.1f, frames);
+        frames.clear();
+
 
         defineGino();
 
@@ -111,7 +124,7 @@ public class Gino extends Sprite {
                 region = ginoFall.getKeyFrame(stateTime);
                 break;
             case THROWING:
-                region = ginoThrow.getKeyFrame(stateTime);
+                region = ginoThrow.getKeyFrame(stateTime, false);
                 break;
             case IDLING:
             default:
@@ -152,9 +165,6 @@ public class Gino extends Sprite {
         else if(b2body.getPosition().y < 0){
             return State.DIEING;
         }
-        else if(b2body.getLinearVelocity().x != 0) {
-            return State.THROWING;
-        }
         else { return State.IDLING; }
     }
 
@@ -170,5 +180,6 @@ public class Gino extends Sprite {
 
         fixtureDef.shape = circleShape;
         b2body.createFixture(fixtureDef);
+        b2body.setUserData("Player");
     }
 }

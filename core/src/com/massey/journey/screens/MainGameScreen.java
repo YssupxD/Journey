@@ -22,6 +22,8 @@ import static com.massey.journey.Utils.Box2dVariables.PPM;
 
 public class MainGameScreen implements Screen {
 
+    private boolean debug = false;
+
     //Reference to the game, used to set Screens
     private Journey game;
     private TextureAtlas atlas;
@@ -41,11 +43,14 @@ public class MainGameScreen implements Screen {
     private Box2DDebugRenderer box2DDebugRenderer;
     private Gino gino;
 
-    //key pressed
-    public static int jPressed = 0;
+    public int test;
+
 
     //constructor
     public MainGameScreen(Journey game) {
+
+        test = 1;
+
         atlas = new TextureAtlas("Texture Pack.atlas");
 
         this.game = game;
@@ -98,6 +103,8 @@ public class MainGameScreen implements Screen {
             gino.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), gino.b2body.getWorldCenter(), true);
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.J)) {
+            hud.setDaggerCounter(test);
+            test++;
         }
     }
 
@@ -126,7 +133,9 @@ public class MainGameScreen implements Screen {
         renderer.render();
 
         //render Box2DDebugLines
-        box2DDebugRenderer.render(world, gameCam.combined);
+        if(debug) {
+            box2DDebugRenderer.render(world, gameCam.combined);
+        }
 
         game.batch.setProjectionMatrix(gameCam.combined);
         game.batch.begin();
