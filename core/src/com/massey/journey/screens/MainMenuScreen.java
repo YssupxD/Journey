@@ -4,20 +4,24 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.massey.journey.Journey;
 
 public class MainMenuScreen implements Screen {
 
     private static final int TITLE_WIDTH = 442;
-    private static final int TITLE_HEIGHT = 58;
+    private static final int TITLE_HEIGHT = 60;
     private static final int TITLE_Y = 400;
 
-    private static final int QUIT_BUTTON_WIDTH = 165;
-    private static final int QUIT_BUTTON_HEIGHT = 37;
+    private static final int QUIT_BUTTON_WIDTH = 219;
+    private static final int QUIT_BUTTON_HEIGHT = 50;
     private static final int QUIT_BUTTON_Y = 250;
 
-    private static final int PLAY_BUTTON_WIDTH = 300;
-    private static final int PLAY_BUTTON_HEIGHT = 37;
+    private static final int PLAY_BUTTON_WIDTH = 219;
+    private static final int PLAY_BUTTON_HEIGHT = 50;
     private static final int PLAY_BUTTON_Y = 320;
 
     Journey game;
@@ -31,15 +35,24 @@ public class MainMenuScreen implements Screen {
     Texture quitButtonSelected;
     Texture quitButtonUnselected;
 
+    private Stage stage;
+
     public MainMenuScreen(Journey game) {
         this.game = game;
 
         title = new Texture("TITLE.png");
 
-        playButtonUnselected = new Texture("NEW_GAME.png");
-        playButtonSelected = new Texture("NEW_GAME_SELECTED.png");
-        quitButtonUnselected = new Texture("QUIT.png");
+        playButtonUnselected = new Texture("PLAY_UNSELECTED.png");
+        playButtonSelected = new Texture("PLAY_SELECTED.png");
+        quitButtonUnselected = new Texture("QUIT_UNSELECTED.png");
         quitButtonSelected = new Texture("QUIT_SELECTED.png");
+
+        stage = new Stage();
+        Table testTable = new Table();
+        testTable.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture("TITILE_BACKGROUND.png"))));
+        testTable.setFillParent(true);
+        testTable.setDebug(false);
+        stage.addActor(testTable);
 
 
     }
@@ -53,6 +66,9 @@ public class MainMenuScreen implements Screen {
     public void render(float deltaTime) {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        stage.act();
+        stage.draw();
 
         game.batch.begin();
 
