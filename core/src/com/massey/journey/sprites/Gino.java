@@ -33,6 +33,8 @@ public class Gino extends Sprite {
     public Body b2body;
     private TextureRegion ginoStand;
 
+    private int numDaggers;
+    private int totalDaggers;
 
     //Animation variables for the player
     private Animation<TextureRegion> ginoJump;
@@ -51,6 +53,7 @@ public class Gino extends Sprite {
 
     public Gino(World world, MainGameScreen screen) {
         super(screen.getAtlas().findRegion("Gino"));
+        this.screen = screen;
         this.world = world;
         currentState = State.IDLING;
         previousState = State.IDLING;
@@ -86,7 +89,7 @@ public class Gino extends Sprite {
         ginoFall = new Animation(0.1f, frames);
         frames.clear();
 
-        for(int i = 7; i < 13; i++) {
+        for(int i = 7; i < 14; i++) {
             frames.add(new TextureRegion(getTexture(), i * 64, 256, 64, 64));
         }
         ginoThrow = new Animation(0.05f, frames);
@@ -191,20 +194,16 @@ public class Gino extends Sprite {
 
         fdef.shape = shape;
         fdef.filter.categoryBits = Box2dVariables.BIT_PLAYER;
-        fdef.filter.maskBits = Box2dVariables.BIT_GROUND | Box2dVariables.BIT_ENEMY;
+        fdef.filter.maskBits =
+                Box2dVariables.BIT_GROUND | Box2dVariables.BIT_ENEMY | Box2dVariables.BIT_DAGGER;
         b2body.createFixture(fdef).setUserData("Player");
-
-        EdgeShape rightEdge = new EdgeShape();
-        rightEdge.set(new Vector2(8 / PPM, 16 / PPM), new Vector2(8 / PPM, -16 / PPM));
-        fdef.shape = rightEdge;
-        fdef.isSensor = true;
-        b2body.createFixture(fdef).setUserData("Right_Edge");
-
-        EdgeShape leftEdge = new EdgeShape();
-        leftEdge.set(new Vector2(-8 / PPM, 16 / PPM), new Vector2(-8 / PPM, -16 / PPM));
-        fdef.shape = leftEdge;
-        fdef.isSensor = true;
-        b2body.createFixture(fdef).setUserData("Left_Edge");
-
     }
+    public void collectDagger() { numDaggers += 5; }
+    public int getNumDagger() { return numDaggers; }
+    public void setTotalDaggers(int i) { totalDaggers = i; }
+    public int getTotalDaggers() { return totalDaggers; }
+
+
+
+
 }

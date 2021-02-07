@@ -7,11 +7,11 @@ import com.massey.journey.screens.MainGameScreen;
 import com.massey.journey.screens.MainMenuScreen;
 
 public class Journey extends Game {
-	public static final int VIRTUAL_WIDTH = 500;
-	public static final int VIRTUAL_HEIGHT = 281;
+	public static final int VIRTUAL_WIDTH = 400;
+	public static final int VIRTUAL_HEIGHT = 200;
 
-	public static final int SCREEN_WIDTH = 1280;
-	public static final int SCREEN_HEIGHT = 720;
+	public static final int SCREEN_WIDTH = 1920;
+	public static final int SCREEN_HEIGHT = 1080;
 
 	public SpriteBatch batch;
 
@@ -29,5 +29,10 @@ public class Journey extends Game {
 	@Override
 	public void render() {
 		super.render();
+	}
+
+	@Override
+	public void dispose() {
+		batch.dispose();
 	}
 }

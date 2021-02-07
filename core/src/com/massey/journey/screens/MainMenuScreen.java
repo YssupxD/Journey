@@ -12,17 +12,17 @@ import com.massey.journey.Journey;
 
 public class MainMenuScreen implements Screen {
 
-    private static final int TITLE_WIDTH = 442;
-    private static final int TITLE_HEIGHT = 60;
-    private static final int TITLE_Y = 400;
+    private static final int TITLE_WIDTH = 884;
+    private static final int TITLE_HEIGHT = 120;
+    private static final int TITLE_Y = 620;
 
-    private static final int QUIT_BUTTON_WIDTH = 219;
-    private static final int QUIT_BUTTON_HEIGHT = 50;
-    private static final int QUIT_BUTTON_Y = 250;
+    private static final int QUIT_BUTTON_WIDTH = 438;
+    private static final int QUIT_BUTTON_HEIGHT = 100;
+    private static final int QUIT_BUTTON_Y = 375;
 
-    private static final int PLAY_BUTTON_WIDTH = 219;
-    private static final int PLAY_BUTTON_HEIGHT = 50;
-    private static final int PLAY_BUTTON_Y = 320;
+    private static final int PLAY_BUTTON_WIDTH = 438;
+    private static final int PLAY_BUTTON_HEIGHT = 100;
+    private static final int PLAY_BUTTON_Y = 500;
 
     Journey game;
 

@@ -22,7 +22,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.massey.journey.Journey;
-import com.massey.journey.Utils.BoundedCam;
 import com.massey.journey.Utils.Box2dVariables;
 import com.massey.journey.Utils.MyContactListener;
 import com.massey.journey.scenes.Hud;
@@ -41,7 +40,7 @@ public class MainGameScreen implements Screen {
     private TextureAtlas atlas;
 
     //basic game screen variables
-    private BoundedCam gameCam;
+    private OrthographicCamera gameCam;
     private Viewport gamePort;
     private Hud hud;
     private JoyCon joyCon;
@@ -65,8 +64,7 @@ public class MainGameScreen implements Screen {
 
         this.game = game;
         //Setup a game camera
-        gameCam = new BoundedCam();
-        gameCam.setToOrtho(false, Journey.VIRTUAL_WIDTH / PPM, Journey.VIRTUAL_HEIGHT / PPM);
+        gameCam = new OrthographicCamera();
 
         //Fitviewport doesn't change the aspect ratio, adding black bars to screen
         gamePort = new FitViewport(Journey.VIRTUAL_WIDTH / PPM, Journey.VIRTUAL_HEIGHT / PPM,
@@ -101,6 +99,7 @@ public class MainGameScreen implements Screen {
 
         //create daggers
         createDaggers();
+        gino.setTotalDaggers(daggers.size);
     }
 
     public TextureAtlas getAtlas() {
@@ -141,9 +140,18 @@ public class MainGameScreen implements Screen {
 
         gino.update(deltaTime);
 
+        if(gino.b2body.getPosition().y < 0) {
+            //TODO: add dying sound and switch to Game over screen
+
+        }
+
+        tmRenderer.setView(gameCam);
+
         for(int i = 0; i < daggers.size; i++) {
             daggers.get(i).update(deltaTime);
         }
+
+
 
     }
 
@@ -154,7 +162,7 @@ public class MainGameScreen implements Screen {
 
 
         //The renderer only paints where the camera sees.
-        tmRenderer.setView(gameCam);
+
         tmRenderer.render();
 
         //clear screen
@@ -180,9 +188,14 @@ public class MainGameScreen implements Screen {
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
 
+        //draw virtual Joy Con
+        game.batch.setProjectionMatrix(joyCon.stage.getCamera().combined);
+        joyCon.stage.draw();
+
         for(int i = 0; i < daggers.size; i++) {
             daggers.get(i).render(game.batch);
         }
+
     }
 
     @Override
@@ -224,21 +237,20 @@ public class MainGameScreen implements Screen {
         }
 
         for(MapObject mo : ml.getObjects()) {
-            BodyDef bdef = new BodyDef();
-            bdef.type = BodyDef.BodyType.StaticBody;
-            float x = Float.parseFloat(mo.getProperties().get("x").toString()) / PPM;
-            float y = Float.parseFloat(mo.getProperties().get("y").toString()) / PPM;
-            bdef.position.set(x, y);
-            Body body = world.createBody(bdef);
-            FixtureDef fdef = new FixtureDef();
+            BodyDef cdef = new BodyDef();
+            cdef.type = BodyDef.BodyType.StaticBody;
+            float x = (float) mo.getProperties().get("x") / PPM;
+            float y = (float) mo.getProperties().get("y")/ PPM;
+            cdef.position.set(x, y);
+            Body body = world.createBody(cdef);
+            FixtureDef cfdef = new FixtureDef();
             CircleShape circleShape = new CircleShape();
             circleShape.setRadius(8 / PPM);
-            fdef.shape = circleShape;
-            fdef.isSensor = true;
-            fdef.filter.categoryBits = Box2dVariables.BIT_DAGGER;
-            fdef.filter.maskBits = Box2dVariables.BIT_PLAYER;
-
-            body.createFixture(fdef).setUserData("Dagger");
+            cfdef.shape = circleShape;
+            cfdef.isSensor = true;
+            cfdef.filter.categoryBits = Box2dVariables.BIT_DAGGER;
+            cfdef.filter.maskBits = Box2dVariables.BIT_PLAYER;
+            body.createFixture(cfdef).setUserData("Dagger");
             Dagger dagger = new Dagger(body);
             body.setUserData(dagger);
             daggers.add(dagger);

@@ -15,6 +15,8 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.massey.journey.Journey;
 
+import javax.print.attribute.standard.JobOriginatingUserName;
+
 public class JoyCon implements Disposable {
     public Stage stage;
     public OrthographicCamera cam;
@@ -30,7 +32,7 @@ public class JoyCon implements Disposable {
         Table table = new Table();
 
         Image left = new Image(new Texture("btnLeft.png"));
-        left.setSize(40, 40);
+        left.setSize(50, 50);
         left.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -44,7 +46,7 @@ public class JoyCon implements Disposable {
         });
 
         Image right = new Image(new Texture("btnRight.png"));
-        right.setSize(40, 40);
+        right.setSize(50, 50);
         right.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -58,7 +60,7 @@ public class JoyCon implements Disposable {
         });
 
         Image jump = new Image(new Texture("btnJump.png"));
-        jump.setSize(40, 40);
+        jump.setSize(50, 50);
         jump.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -72,7 +74,7 @@ public class JoyCon implements Disposable {
         });
 
         Image actionThrow = new Image(new Texture("btnAction.png"));
-        actionThrow.setSize(40, 40);
+        actionThrow.setSize(50, 50);
         actionThrow.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -84,13 +86,13 @@ public class JoyCon implements Disposable {
                 PressedThrow = false;
             }
         });
-
         table.bottom().left();
         table.row();
-        table.add(left).size(left.getWidth(), left.getHeight()).padLeft(10).padRight(15).padBottom(10);
+        table.add(left).size(left.getWidth(), left.getHeight()).padLeft(20).padRight(15).padBottom(10);
         table.add(right).size(right.getWidth(), right.getHeight()).padRight(265).padBottom(10);
         table.add(jump).size(jump.getWidth(), jump.getHeight()).padLeft(265).padBottom(10);
         table.add(actionThrow).size(actionThrow.getWidth(), actionThrow.getHeight()).padLeft(15).padBottom(50);
+        stage.addActor(table);
     }
 
     public JoyCon() {

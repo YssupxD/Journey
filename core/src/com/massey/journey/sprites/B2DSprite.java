@@ -5,10 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.massey.journey.Utils.Animation;
-import com.massey.journey.Utils.BoundedCam;
 import com.massey.journey.Utils.Box2dVariables;
-
-import javax.swing.Box;
 
 public class B2DSprite {
 
@@ -38,8 +35,8 @@ public class B2DSprite {
 
     public void render(SpriteBatch batch) {
         batch.begin();
-        batch.draw(animation.getFrame(), getPosition().x * Box2dVariables.PPM - width / 2,
-                getPosition().y * Box2dVariables.PPM - height / 2);
+        batch.draw(animation.getFrame(), (getPosition().x - width / 2) * Box2dVariables.PPM,
+                (getPosition().y - height / 2) * Box2dVariables.PPM);
         batch.end();
     }
 
