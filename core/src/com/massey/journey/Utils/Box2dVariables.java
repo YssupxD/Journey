@@ -10,6 +10,7 @@ public class Box2dVariables {
     public static final short BIT_GROUND = 4;
     public static final short BIT_DAGGER = 8;
     public static final short BIT_ENEMY = 16;
+    public static final short BIT_BULLET = 32;
 
 
 }

@@ -5,15 +5,24 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.massey.journey.Journey;
+import com.massey.journey.Utils.Box2dVariables;
 import com.massey.journey.scenes.Hud;
 import com.massey.journey.screens.MainGameScreen;
+
+import java.security.spec.ECGenParameterSpec;
+
+import javax.swing.Box;
+
 import static com.massey.journey.Utils.Box2dVariables.PPM;
 
 public class Gino extends Sprite {
@@ -78,7 +87,7 @@ public class Gino extends Sprite {
         for(int i = 7; i < 13; i++) {
             frames.add(new TextureRegion(getTexture(), i * 64, 256, 64, 64));
         }
-        ginoThrow = new Animation(0.1f, frames);
+        ginoThrow = new Animation(0.05f, frames);
         frames.clear();
 
         for(int i = 0; i < 5; i++) {
@@ -90,7 +99,7 @@ public class Gino extends Sprite {
         for(int i = 5; i < 9; i++) {
             frames.add(new TextureRegion(getTexture(), i * 64, 320, 64, 64));
         }
-        ginoDie = new Animation(0.1f, frames);
+        ginoGetHit = new Animation(0.1f, frames);
         frames.clear();
 
 
@@ -174,12 +183,26 @@ public class Gino extends Sprite {
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bodyDef);
 
-        FixtureDef fixtureDef = new FixtureDef();
-        CircleShape circleShape = new CircleShape();
-        circleShape.setRadius(15 / PPM);
+        FixtureDef fdef = new FixtureDef();
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(6 / PPM, 16 / PPM);
 
-        fixtureDef.shape = circleShape;
-        b2body.createFixture(fixtureDef);
-        b2body.setUserData("Player");
+        fdef.shape = shape;
+        fdef.filter.categoryBits = Box2dVariables.BIT_PLAYER;
+        fdef.filter.maskBits = Box2dVariables.BIT_GROUND | Box2dVariables.BIT_ENEMY;
+        b2body.createFixture(fdef).setUserData("Player");
+
+        EdgeShape rightEdge = new EdgeShape();
+        rightEdge.set(new Vector2(8 / PPM, 16 / PPM), new Vector2(8 / PPM, -16 / PPM));
+        fdef.shape = rightEdge;
+        fdef.isSensor = true;
+        b2body.createFixture(fdef).setUserData("Right_Edge");
+
+        EdgeShape leftEdge = new EdgeShape();
+        leftEdge.set(new Vector2(-8 / PPM, 16 / PPM), new Vector2(-8 / PPM, -16 / PPM));
+        fdef.shape = leftEdge;
+        fdef.isSensor = true;
+        b2body.createFixture(fdef).setUserData("Left_Edge");
+
     }
 }

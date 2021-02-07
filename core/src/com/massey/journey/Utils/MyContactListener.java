@@ -21,6 +21,8 @@ public class MyContactListener implements com.badlogic.gdx.physics.box2d.Contact
     public void beginContact(Contact contact) {
         Fixture fa = contact.getFixtureA();
         Fixture fb = contact.getFixtureB();
+
+
         if(fa == null || fb == null) {
             return;
         }
@@ -38,6 +40,8 @@ public class MyContactListener implements com.badlogic.gdx.physics.box2d.Contact
     public void endContact(Contact contact) {
         Fixture fa = contact.getFixtureA();
         Fixture fb = contact.getFixtureB();
+
+
 
     }
 

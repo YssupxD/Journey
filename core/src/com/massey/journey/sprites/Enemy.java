@@ -1,4 +1,4 @@
 package com.massey.journey.sprites;
 
-public class Enemy01 {
+public class Enemy {
 }

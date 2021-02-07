@@ -91,6 +91,9 @@ public class MainMenuScreen implements Screen {
         if(Gdx.input.getX() < x + QUIT_BUTTON_WIDTH && Gdx.input.getX() > x && Journey.SCREEN_HEIGHT - Gdx.input.getY() < QUIT_BUTTON_Y + QUIT_BUTTON_HEIGHT && Journey.SCREEN_HEIGHT - Gdx.input.getY() > QUIT_BUTTON_Y){
             game.batch.draw(quitButtonSelected, x, QUIT_BUTTON_Y, QUIT_BUTTON_WIDTH,
                     QUIT_BUTTON_HEIGHT);
+            if(Gdx.input.isTouched()) {
+                Gdx.app.exit();
+            }
         } else {
             game.batch.draw(quitButtonUnselected, x, QUIT_BUTTON_Y, QUIT_BUTTON_WIDTH,
                     QUIT_BUTTON_HEIGHT);
