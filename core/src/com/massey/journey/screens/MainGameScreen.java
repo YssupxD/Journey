@@ -26,6 +26,7 @@ import com.massey.journey.Utils.BoundedCam;
 import com.massey.journey.Utils.Box2dVariables;
 import com.massey.journey.Utils.MyContactListener;
 import com.massey.journey.scenes.Hud;
+import com.massey.journey.scenes.JoyCon;
 import com.massey.journey.sprites.Dagger;
 import com.massey.journey.sprites.Gino;
 import com.massey.journey.Utils.B2WorldCreator;
@@ -43,6 +44,7 @@ public class MainGameScreen implements Screen {
     private BoundedCam gameCam;
     private Viewport gamePort;
     private Hud hud;
+    private JoyCon joyCon;
 
     //Tiled map variables
     private TmxMapLoader mapLoader;
@@ -54,7 +56,6 @@ public class MainGameScreen implements Screen {
     private Box2DDebugRenderer b2dRenderer;
     private Gino gino;
     private Array<Dagger> daggers;
-
 
 
     //constructor
@@ -73,6 +74,9 @@ public class MainGameScreen implements Screen {
 
         //create game HUD for game info.
         hud = new Hud(game.batch);
+
+        //create virtual control system;
+        joyCon = new JoyCon(game.batch);
 
         //Load and setup map render.
         mapLoader = new TmxMapLoader();
@@ -103,26 +107,35 @@ public class MainGameScreen implements Screen {
         return atlas;
     }
 
+    public JoyCon getJoyCon() {
+        return joyCon;
+    }
+
+
     @Override
     public void show() {
 
     }
 
     public void handleInput(float deltaTime) {
-        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && gino.b2body.getLinearVelocity().y == 0){
+        if((Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || joyCon.isPressJump()) && gino.b2body.getLinearVelocity().y == 0){
             gino.b2body.applyLinearImpulse(new Vector2(0, 3.5f), gino.b2body.getWorldCenter(),
                     true);
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.D) && gino.b2body.getLinearVelocity().x <= 2) {
+        if((Gdx.input.isKeyPressed(Input.Keys.D) || joyCon.isPressRight())&& gino.b2body.getLinearVelocity().x <= 2) {
             gino.b2body.applyLinearImpulse(new Vector2(0.1f, 0), gino.b2body.getWorldCenter(), true);
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.A) && gino.b2body.getLinearVelocity().x >= -2) {
+        if((Gdx.input.isKeyPressed(Input.Keys.A) || joyCon.isPressLeft())&& gino.b2body.getLinearVelocity().x >= -2) {
             gino.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), gino.b2body.getWorldCenter(), true);
         }
     }
 
     public void update(float deltaTime) {
         handleInput(deltaTime);
+
+        gameCam.position.x = gino.b2body.getPosition().x;
+        gameCam.position.y = gino.b2body.getPosition().y;
+        gameCam.update();
 
         world.step(1 / 60f, 1, 1);
 
@@ -136,10 +149,6 @@ public class MainGameScreen implements Screen {
 
     @Override
     public void render(float deltaTime) {
-
-        gameCam.position.x = gino.b2body.getPosition().x;
-        gameCam.position.y = gino.b2body.getPosition().y;
-        gameCam.update();
 
         update(deltaTime);
 

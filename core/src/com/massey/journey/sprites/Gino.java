@@ -47,6 +47,8 @@ public class Gino extends Sprite {
 
     private boolean runningRight;
 
+    MainGameScreen screen;
+
     public Gino(World world, MainGameScreen screen) {
         super(screen.getAtlas().findRegion("Gino"));
         this.world = world;
@@ -168,7 +170,7 @@ public class Gino extends Sprite {
         else if(b2body.getLinearVelocity().y < 0) {
             return State.FALLING;
         }
-        else if(Gdx.input.isKeyPressed(Input.Keys.J)){
+        else if(Gdx.input.isKeyPressed(Input.Keys.J) || screen.getJoyCon().isPressThrow()){
             return State.THROWING;
         }
         else if(b2body.getPosition().y < 0){
