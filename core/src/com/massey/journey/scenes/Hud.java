@@ -16,23 +16,31 @@ public class Hud implements Disposable {
     public Stage stage;
     private Viewport viewport;
 
-    public static Integer daggerCounter;
-    public static float timeCount;
-    public static Integer hpCounter;
+    public Integer daggerCounter;
+    public Integer hpCounter;
 
     Label countdownLabel;
     Label lifepointLabel;
     Label daggerLabel;
     Label levelLabel;
     Label worldLabel;
+
+    public void setDaggerCounter(Integer daggerCounter) {
+        this.daggerCounter = daggerCounter;
+    }
+
+    public void setHpCounter(Integer hpCounter) {
+        this.hpCounter = hpCounter;
+    }
+
     Label ginoLabel;
 
     public Hud(SpriteBatch sb) {
         daggerCounter = 0;
-        timeCount = 0;
         hpCounter = 100;
 
-        viewport = new FitViewport(Journey.SCREEN_WIDTH, Journey.SCREEN_HEIGHT, new OrthographicCamera());
+        viewport = new FitViewport(Journey.VIRTUAL_WIDTH, Journey.VIRTUAL_HEIGHT,
+                new OrthographicCamera());
         //
         stage = new Stage(viewport, sb);
 

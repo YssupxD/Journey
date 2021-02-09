@@ -1,18 +1,29 @@
 package com.massey.journey.sprites;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.massey.journey.Journey;
+import com.massey.journey.Utils.Box2dVariables;
+import com.massey.journey.scenes.Hud;
 import com.massey.journey.screens.MainGameScreen;
 
-import sun.applet.Main;
+import java.security.spec.ECGenParameterSpec;
+
+import javax.swing.Box;
+
+import static com.massey.journey.Utils.Box2dVariables.PPM;
 
 public class Gino extends Sprite {
     public enum State { JUMPING, IDLING, FALLING, RUNNING, THROWING, DIEING, GETTING_HIT }
@@ -22,6 +33,8 @@ public class Gino extends Sprite {
     public Body b2body;
     private TextureRegion ginoStand;
 
+    private int numDaggers;
+    private int totalDaggers;
 
     //Animation variables for the player
     private Animation<TextureRegion> ginoJump;
@@ -32,20 +45,23 @@ public class Gino extends Sprite {
     private Animation<TextureRegion> ginoDie;
     private Animation<TextureRegion> ginoGetHit;
 
-    private float stateTimer;
+    private float stateTime;
 
     private boolean runningRight;
 
+    MainGameScreen screen;
+
     public Gino(World world, MainGameScreen screen) {
         super(screen.getAtlas().findRegion("Gino"));
+        this.screen = screen;
         this.world = world;
         currentState = State.IDLING;
         previousState = State.IDLING;
-        stateTimer = 0;
+        stateTime = 0;
         runningRight = true;
 
         ginoStand = new TextureRegion(getTexture(), 0, 384, 64, 64);
-        setBounds(0, 0, 64 / Journey.PPM, 64 / Journey.PPM);
+        setBounds(0, 0, 64 / PPM, 64 / PPM);
         setRegion(ginoStand);
 
         Array<TextureRegion> frames = new Array<TextureRegion>();
@@ -73,10 +89,22 @@ public class Gino extends Sprite {
         ginoFall = new Animation(0.1f, frames);
         frames.clear();
 
-        for(int i = 7; i < 13; i++) {
+        for(int i = 7; i < 14; i++) {
             frames.add(new TextureRegion(getTexture(), i * 64, 256, 64, 64));
         }
-        ginoThrow = new Animation(0.1f, frames);
+        ginoThrow = new Animation(0.05f, frames);
+        frames.clear();
+
+        for(int i = 0; i < 5; i++) {
+            frames.add(new TextureRegion(getTexture(), i * 64, 320, 64, 64));
+        }
+        ginoDie = new Animation(0.1f, frames);
+        frames.clear();
+
+        for(int i = 5; i < 9; i++) {
+            frames.add(new TextureRegion(getTexture(), i * 64, 320, 64, 64));
+        }
+        ginoGetHit = new Animation(0.1f, frames);
         frames.clear();
 
 
@@ -101,20 +129,20 @@ public class Gino extends Sprite {
         TextureRegion region;
         switch (currentState) {
             case JUMPING:
-                region = ginoJump.getKeyFrame(stateTimer, true);
+                region = ginoJump.getKeyFrame(stateTime, true);
                 break;
             case RUNNING:
-                region = ginoRun.getKeyFrame(stateTimer, true);
+                region = ginoRun.getKeyFrame(stateTime, true);
                 break;
             case FALLING:
-                region = ginoFall.getKeyFrame(stateTimer);
+                region = ginoFall.getKeyFrame(stateTime);
                 break;
             case THROWING:
-                region = ginoThrow.getKeyFrame(stateTimer);
+                region = ginoThrow.getKeyFrame(stateTime, false);
                 break;
             case IDLING:
             default:
-                region = ginoIdle.getKeyFrame(stateTimer, true);
+                region = ginoIdle.getKeyFrame(stateTime, true);
                 break;
         }
         if((b2body.getLinearVelocity().x < 0 || !runningRight) && !region.isFlipX()) {
@@ -125,7 +153,12 @@ public class Gino extends Sprite {
             region.flip(true, false);
             runningRight = true;
         }
-        stateTimer = currentState == previousState ? stateTimer + deltaTime : 0;
+        if(currentState == previousState) {
+            stateTime += deltaTime;
+        }
+        else{
+            stateTime = 0;
+        }
         previousState = currentState;
         return region;
     }
@@ -140,29 +173,37 @@ public class Gino extends Sprite {
         else if(b2body.getLinearVelocity().y < 0) {
             return State.FALLING;
         }
-        else if(b2body.getLinearVelocity().x == 0 && b2body.getLinearVelocity().y == 0){
-            return State.IDLING;
+        else if(Gdx.input.isKeyPressed(Input.Keys.J) || screen.getJoyCon().isPressThrow()){
+            return State.THROWING;
         }
         else if(b2body.getPosition().y < 0){
             return State.DIEING;
-        }
-        else if(b2body.getLinearVelocity().x != 0) {
-            return State.THROWING;
         }
         else { return State.IDLING; }
     }
 
     public void defineGino() {
         BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set(50 / Journey.PPM, 250 / Journey.PPM);
+        bodyDef.position.set(50 / PPM, 250 / PPM);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bodyDef);
 
-        FixtureDef fixtureDef = new FixtureDef();
-        CircleShape circleShape = new CircleShape();
-        circleShape.setRadius(15 / Journey.PPM);
+        FixtureDef fdef = new FixtureDef();
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(6 / PPM, 16 / PPM);
 
-        fixtureDef.shape = circleShape;
-        b2body.createFixture(fixtureDef);
+        fdef.shape = shape;
+        fdef.filter.categoryBits = Box2dVariables.BIT_PLAYER;
+        fdef.filter.maskBits =
+                Box2dVariables.BIT_GROUND | Box2dVariables.BIT_ENEMY | Box2dVariables.BIT_DAGGER;
+        b2body.createFixture(fdef).setUserData("Player");
     }
+    public void collectDagger() { numDaggers += 5; }
+    public int getNumDagger() { return numDaggers; }
+    public void setTotalDaggers(int i) { totalDaggers = i; }
+    public int getTotalDaggers() { return totalDaggers; }
+
+
+
+
 }

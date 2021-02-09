@@ -6,20 +6,34 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.massey.journey.Journey;
+import com.massey.journey.Utils.Box2dVariables;
+import com.massey.journey.Utils.MyContactListener;
 import com.massey.journey.scenes.Hud;
+import com.massey.journey.scenes.JoyCon;
+import com.massey.journey.sprites.Dagger;
 import com.massey.journey.sprites.Gino;
 import com.massey.journey.Utils.B2WorldCreator;
+import static com.massey.journey.Utils.Box2dVariables.PPM;
 
 public class MainGameScreen implements Screen {
+
+    private boolean debug = true;
 
     //Reference to the game, used to set Screens
     private Journey game;
@@ -29,22 +43,23 @@ public class MainGameScreen implements Screen {
     private OrthographicCamera gameCam;
     private Viewport gamePort;
     private Hud hud;
+    private JoyCon joyCon;
 
     //Tiled map variables
     private TmxMapLoader mapLoader;
-    private TiledMap map;
-    private OrthogonalTiledMapRenderer renderer;
+    private TiledMap tiledMap;
+    private OrthogonalTiledMapRenderer tmRenderer;
 
     //Box2d variables
     private World world;
-    private Box2DDebugRenderer box2DDebugRenderer;
+    private Box2DDebugRenderer b2dRenderer;
     private Gino gino;
+    private Array<Dagger> daggers;
 
-    //key pressed
-    public static int jPressed = 0;
 
     //constructor
     public MainGameScreen(Journey game) {
+
         atlas = new TextureAtlas("Texture Pack.atlas");
 
         this.game = game;
@@ -52,32 +67,49 @@ public class MainGameScreen implements Screen {
         gameCam = new OrthographicCamera();
 
         //Fitviewport doesn't change the aspect ratio, adding black bars to screen
-        gamePort = new FitViewport(Journey.SCREEN_WIDTH / Journey.PPM, Journey.SCREEN_HEIGHT / Journey.PPM, gameCam);
+        gamePort = new FitViewport(Journey.VIRTUAL_WIDTH / PPM, Journey.VIRTUAL_HEIGHT / PPM,
+                gameCam);
 
         //create game HUD for game info.
         hud = new Hud(game.batch);
 
+        //create virtual control system;
+        joyCon = new JoyCon(game.batch);
+
         //Load and setup map render.
         mapLoader = new TmxMapLoader();
-        map = mapLoader.load("level1.tmx");
-        renderer = new OrthogonalTiledMapRenderer(map, 1 / Journey.PPM);
+        tiledMap = mapLoader.load("level1.tmx");
+        tmRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1 / PPM);
 
         //set game camera to be centered when the game starts
         gameCam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2, 0);
 
-        //Setup Box2D world, set 0 gravity in X axis, -10 in Y axis, and allow bodies to sleep
+        //Setup Box2D world, set 0 gravity in X axis, -9.8 in Y axis, and allow bodies to sleep
         world = new World(new Vector2(0,-9.8f), true);
+        world.setContactListener(new MyContactListener());
+
         //allows for debug lines of game world
-        box2DDebugRenderer = new Box2DDebugRenderer();
+        b2dRenderer = new Box2DDebugRenderer();
 
-        new B2WorldCreator(world, map);
+        //create level graphics
+        new B2WorldCreator(world, tiledMap, 7);
 
+        //create player
         gino = new Gino(world, this);
+
+        //create daggers
+        createDaggers();
+        gino.setTotalDaggers(daggers.size);
     }
 
     public TextureAtlas getAtlas() {
         return atlas;
     }
+
+    public JoyCon getJoyCon() {
+        return joyCon;
+    }
+
 
     @Override
     public void show() {
@@ -85,54 +117,85 @@ public class MainGameScreen implements Screen {
     }
 
     public void handleInput(float deltaTime) {
-        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && gino.b2body.getLinearVelocity().y == 0){
+        if((Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || joyCon.isPressJump()) && gino.b2body.getLinearVelocity().y == 0){
             gino.b2body.applyLinearImpulse(new Vector2(0, 3.5f), gino.b2body.getWorldCenter(),
                     true);
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.D) && gino.b2body.getLinearVelocity().x <= 2) {
+        if((Gdx.input.isKeyPressed(Input.Keys.D) || joyCon.isPressRight())&& gino.b2body.getLinearVelocity().x <= 2) {
             gino.b2body.applyLinearImpulse(new Vector2(0.1f, 0), gino.b2body.getWorldCenter(), true);
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.A) && gino.b2body.getLinearVelocity().x >= -2) {
+        if((Gdx.input.isKeyPressed(Input.Keys.A) || joyCon.isPressLeft())&& gino.b2body.getLinearVelocity().x >= -2) {
             gino.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), gino.b2body.getWorldCenter(), true);
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.J)) {
         }
     }
 
     public void update(float deltaTime) {
         handleInput(deltaTime);
 
-        world.step(1 / 60f, 5, 1);
-
-        gino.update(deltaTime);
-
         gameCam.position.x = gino.b2body.getPosition().x;
         gameCam.position.y = gino.b2body.getPosition().y;
         gameCam.update();
-        //The renderer only paints where the camera sees.
-        renderer.setView(gameCam);
+
+        world.step(1 / 60f, 1, 1);
+
+        gino.update(deltaTime);
+
+        if(gino.b2body.getPosition().y < 0) {
+            //TODO: add dying sound and switch to Game over screen
+
+        }
+
+        tmRenderer.setView(gameCam);
+
+        for(int i = 0; i < daggers.size; i++) {
+            daggers.get(i).update(deltaTime);
+        }
+
+
+
     }
 
     @Override
     public void render(float deltaTime) {
+
         update(deltaTime);
 
+
+        //The renderer only paints where the camera sees.
+
+        tmRenderer.render();
+
+        //clear screen
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         //map render
-        renderer.render();
+        tmRenderer.render();
 
         //render Box2DDebugLines
-        box2DDebugRenderer.render(world, gameCam.combined);
+        if(debug) {
+            b2dRenderer.render(world, gameCam.combined);
+        }
 
+        //draw Player
         game.batch.setProjectionMatrix(gameCam.combined);
         game.batch.begin();
         gino.draw(game.batch);
         game.batch.end();
 
+
+        //draw HUD
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
+
+        //draw virtual Joy Con
+        game.batch.setProjectionMatrix(joyCon.stage.getCamera().combined);
+        joyCon.stage.draw();
+
+        for(int i = 0; i < daggers.size; i++) {
+            daggers.get(i).render(game.batch);
+        }
+
     }
 
     @Override
@@ -157,10 +220,41 @@ public class MainGameScreen implements Screen {
 
     @Override
     public void dispose() {
-        map.dispose();
-        renderer.dispose();
+        tiledMap.dispose();
+        tmRenderer.dispose();
         world.dispose();
-        box2DDebugRenderer.dispose();
+        b2dRenderer.dispose();
         hud.dispose();
+
+    }
+
+    private void createDaggers() {
+        daggers = new Array<Dagger>();
+
+        MapLayer ml = tiledMap.getLayers().get("daggers");
+        if(ml == null) {
+            return;
+        }
+
+        for(MapObject mo : ml.getObjects()) {
+            BodyDef cdef = new BodyDef();
+            cdef.type = BodyDef.BodyType.StaticBody;
+            float x = (float) mo.getProperties().get("x") / PPM;
+            float y = (float) mo.getProperties().get("y")/ PPM;
+            cdef.position.set(x, y);
+            Body body = world.createBody(cdef);
+            FixtureDef cfdef = new FixtureDef();
+            CircleShape circleShape = new CircleShape();
+            circleShape.setRadius(8 / PPM);
+            cfdef.shape = circleShape;
+            cfdef.isSensor = true;
+            cfdef.filter.categoryBits = Box2dVariables.BIT_DAGGER;
+            cfdef.filter.maskBits = Box2dVariables.BIT_PLAYER;
+            body.createFixture(cfdef).setUserData("Dagger");
+            Dagger dagger = new Dagger(body);
+            body.setUserData(dagger);
+            daggers.add(dagger);
+            circleShape.dispose();
+        }
     }
 }
