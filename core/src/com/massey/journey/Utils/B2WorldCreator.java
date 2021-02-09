@@ -12,9 +12,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.massey.journey.Journey;
 
 public class B2WorldCreator {
-    private int level1ID = 7;
-    private int level2ID = 13;
-    public B2WorldCreator(World world, TiledMap map) {
+    public B2WorldCreator(World world, TiledMap map, int levelID) {
         //Create body and fixture variables
         BodyDef bodyDef = new BodyDef();
         PolygonShape shape = new PolygonShape();
@@ -23,7 +21,7 @@ public class B2WorldCreator {
 
         //create ground fixtures
         for(MapObject object :
-                map.getLayers().get(level1ID).getObjects().getByType(RectangleMapObject.class)) {
+                map.getLayers().get(levelID).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
             bodyDef.type = BodyDef.BodyType.StaticBody;
             bodyDef.position.set((rect.getX() + rect.getWidth() / 2) / Journey.PPM, (rect.getY() + rect.getHeight() / 2) / Journey.PPM);
