@@ -1,4 +1,4 @@
-package com.massey.journey.Utils;
+package com.massey.journey.utilities;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 

@@ -8,107 +8,103 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.massey.journey.Journey;
-import com.massey.journey.Utils.Box2dVariables;
-import com.massey.journey.scenes.Hud;
-import com.massey.journey.screens.MainGameScreen;
+import com.massey.journey.main.Journey;
+import com.massey.journey.utilities.Box2dVariables;
+import com.massey.journey.states.PlayState;
+import com.massey.journey.utilities.GameStateManager;
 
-import java.security.spec.ECGenParameterSpec;
-
-import javax.swing.Box;
-
-import static com.massey.journey.Utils.Box2dVariables.PPM;
+import static com.massey.journey.utilities.Box2dVariables.PPM;
 
 public class Gino extends Sprite {
-    public enum State { JUMPING, IDLING, FALLING, RUNNING, THROWING, DIEING, GETTING_HIT }
+    public enum State { JUMPING, IDLING, FALLING, RUNNING, ATTACKING, DIEING, GETTING_HIT }
     public State currentState;
     public State previousState;
     public World world;
     public Body b2body;
-    private TextureRegion ginoStand;
-
-    private int numDaggers;
-    private int totalDaggers;
 
     //Animation variables for the player
     private Animation<TextureRegion> ginoJump;
     private Animation<TextureRegion> ginoIdle;
     private Animation<TextureRegion> ginoFall;
     private Animation<TextureRegion> ginoRun;
-    private Animation<TextureRegion> ginoThrow;
+    private Animation<TextureRegion> ginoAttack;
     private Animation<TextureRegion> ginoDie;
     private Animation<TextureRegion> ginoGetHit;
 
     private float stateTime;
-
     private boolean runningRight;
+    private boolean ginoIsDead;
+    private boolean ginoIsHit;
+    private boolean runThrowAnimation = true;
 
-    MainGameScreen screen;
+    PlayState screen;
 
-    public Gino(World world, MainGameScreen screen) {
-        super(screen.getAtlas().findRegion("Gino"));
+    public Gino(World world, PlayState screen) {
         this.screen = screen;
         this.world = world;
+
         currentState = State.IDLING;
         previousState = State.IDLING;
         stateTime = 0;
         runningRight = true;
 
-        ginoStand = new TextureRegion(getTexture(), 0, 384, 64, 64);
-        setBounds(0, 0, 64 / PPM, 64 / PPM);
-        setRegion(ginoStand);
-
         Array<TextureRegion> frames = new Array<TextureRegion>();
+
         for(int i = 1; i < 9; i++) {
-            frames.add(new TextureRegion(getTexture(), i * 64,  384, 64, 64));
+            frames.add(new TextureRegion(screen.getAtlas().findRegion("Gino"), i * 64,  128, 64,
+                    64));
         }
         ginoIdle = new Animation(0.1f, frames);
         frames.clear();
 
         for(int i = 9; i < 17; i++) {
-            frames.add(new TextureRegion(getTexture(), i * 64, 384, 64, 64));
+            frames.add(new TextureRegion(screen.getAtlas().findRegion("Gino"), i * 64, 128, 64,
+                    64));
         }
         ginoRun = new Animation(0.1f, frames);
         frames.clear();
 
         for(int i = 17; i < 20; i++) {
-            frames.add(new TextureRegion(getTexture(), i * 64, 384, 64, 64));
+            frames.add(new TextureRegion(screen.getAtlas().findRegion("Gino"), i * 64, 128, 64,
+                    64));
         }
         ginoJump = new Animation(0.1f, frames);
         frames.clear();
 
         for(int i = 20; i < 23; i++) {
-            frames.add(new TextureRegion(getTexture(), i * 64, 384, 64, 64));
+            frames.add(new TextureRegion(screen.getAtlas().findRegion("Gino"), i * 64, 128, 64,
+                    64));
         }
         ginoFall = new Animation(0.1f, frames);
         frames.clear();
 
-        for(int i = 7; i < 14; i++) {
-            frames.add(new TextureRegion(getTexture(), i * 64, 256, 64, 64));
+        for(int i = 0; i < 7; i++) {
+            frames.add(new TextureRegion(screen.getAtlas().findRegion("Gino"), i * 64, 192, 64,
+                    64));
         }
-        ginoThrow = new Animation(0.05f, frames);
+        ginoAttack = new Animation(0.1f, frames);
         frames.clear();
 
         for(int i = 0; i < 5; i++) {
-            frames.add(new TextureRegion(getTexture(), i * 64, 320, 64, 64));
+            frames.add(new TextureRegion(screen.getAtlas().findRegion("Gino"), i * 64, 64, 64, 64));
         }
         ginoDie = new Animation(0.1f, frames);
         frames.clear();
 
         for(int i = 5; i < 9; i++) {
-            frames.add(new TextureRegion(getTexture(), i * 64, 320, 64, 64));
+            frames.add(new TextureRegion(screen.getAtlas().findRegion("Gino"), i * 64, 64, 64, 64));
         }
         ginoGetHit = new Animation(0.1f, frames);
         frames.clear();
 
-
         defineGino();
+
+        setBounds(0, 0, 64 / PPM, 64 / PPM);
+        setRegion(ginoIdle.getKeyFrame(stateTime, true));
 
 
     }
@@ -137,8 +133,16 @@ public class Gino extends Sprite {
             case FALLING:
                 region = ginoFall.getKeyFrame(stateTime);
                 break;
-            case THROWING:
-                region = ginoThrow.getKeyFrame(stateTime, false);
+            case ATTACKING:
+                region = ginoAttack.getKeyFrame(stateTime, false);
+                break;
+
+            case DIEING:
+                region = ginoDie.getKeyFrame(stateTime, false);
+                break;
+
+            case GETTING_HIT:
+                region = ginoGetHit.getKeyFrame(stateTime, false);
                 break;
             case IDLING:
             default:
@@ -173,10 +177,11 @@ public class Gino extends Sprite {
         else if(b2body.getLinearVelocity().y < 0) {
             return State.FALLING;
         }
-        else if(Gdx.input.isKeyPressed(Input.Keys.J) || screen.getJoyCon().isPressThrow()){
-            return State.THROWING;
+        else if((Gdx.input.isKeyPressed(Input.Keys.J)) || screen.getJoyCon
+        ().isPressAttack()){
+            return State.ATTACKING;
         }
-        else if(b2body.getPosition().y < 0){
+        else if(ginoIsDead){
             return State.DIEING;
         }
         else { return State.IDLING; }
@@ -184,7 +189,7 @@ public class Gino extends Sprite {
 
     public void defineGino() {
         BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set(50 / PPM, 250 / PPM);
+        bodyDef.position.set(50 / PPM, 200 / PPM);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bodyDef);
 
@@ -195,15 +200,21 @@ public class Gino extends Sprite {
         fdef.shape = shape;
         fdef.filter.categoryBits = Box2dVariables.BIT_PLAYER;
         fdef.filter.maskBits =
-                Box2dVariables.BIT_GROUND | Box2dVariables.BIT_ENEMY | Box2dVariables.BIT_DAGGER;
-        b2body.createFixture(fdef).setUserData("Player");
+                Box2dVariables.BIT_GROUND | Box2dVariables.BIT_ENEMY | Box2dVariables.BIT_DIAMOND;
+        b2body.createFixture(fdef).setUserData("Gino");
+
+        shape.setAsBox(10 / PPM, 8 / PPM, new Vector2(18 / PPM, 0), 0);
+        fdef.shape = shape;
+        fdef.isSensor = true;
+        fdef.filter.categoryBits = Box2dVariables.BIT_SWORD;
+        fdef.filter.maskBits = Box2dVariables.BIT_ENEMY;
+        b2body.createFixture(fdef).setUserData("sword");
+
+        shape.setAsBox(-10 / PPM, 8 / PPM, new Vector2(-18 / PPM, 0), 0);
+        fdef.shape = shape;
+        fdef.isSensor = true;
+        fdef.filter.categoryBits = Box2dVariables.BIT_SWORD;
+        fdef.filter.maskBits = Box2dVariables.BIT_ENEMY;
+        b2body.createFixture(fdef).setUserData("sword");
     }
-    public void collectDagger() { numDaggers += 5; }
-    public int getNumDagger() { return numDaggers; }
-    public void setTotalDaggers(int i) { totalDaggers = i; }
-    public int getTotalDaggers() { return totalDaggers; }
-
-
-
-
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="200" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="24" nextobjectid="422">
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="200" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="26" nextobjectid="442">
  <tileset firstgid="1" source="background1.tsx"/>
  <tileset firstgid="391" source="background2.tsx"/>
  <tileset firstgid="871" source="background3.tsx"/>
@@ -43,10 +43,6 @@
   </data>
  </layer>
  <objectgroup id="20" name="ground" locked="1">
-  <object id="141" x="128" y="288" width="224" height="16"/>
-  <object id="142" x="352" y="288" width="96" height="16"/>
-  <object id="150" x="576" y="240" width="368" height="16"/>
-  <object id="151" x="944" y="240" width="208" height="16"/>
   <object id="152" x="1152" y="208" width="16" height="32"/>
   <object id="153" x="1168" y="208" width="144" height="16"/>
   <object id="157" x="1312" y="224" width="26.7416" height="16"/>
@@ -91,12 +87,10 @@
   <object id="286" x="1791.85" y="160.365" width="10.5955" height="10.5955"/>
   <object id="287" x="1781.26" y="160.365" width="10.5955" height="10.5955"/>
   <object id="290" x="2448" y="240" width="11.4589" height="12.841"/>
-  <object id="293" x="480" y="272" width="32" height="16"/>
   <object id="320" x="448" y="284.348" width="5.04357" height="9.34021"/>
   <object id="321" x="458.2" y="278.445" width="5.2584" height="12.7775"/>
   <object id="323" x="453.156" y="281.35" width="5.04357" height="10.6292"/>
   <object id="324" x="464" y="275.335" width="5.47323" height="14.2813"/>
-  <object id="325" x="469.044" y="272.327" width="10.4144" height="16"/>
   <object id="326" x="1664.43" y="220.348" width="16" height="16"/>
   <object id="327" x="1669.26" y="217.238" width="16" height="16"/>
   <object id="328" x="1674.3" y="214.23" width="16" height="16"/>
@@ -166,26 +160,25 @@
   <object id="405" x="2580.85" y="307.019" width="11.4589" height="12.841"/>
   <object id="407" x="2053.99" y="395.753" width="30.9839" height="36.2474"/>
   <object id="408" x="1536" y="0" width="304" height="16"/>
-  <object id="409" x="0" y="288" width="128" height="16"/>
   <object id="410" x="0" y="176" height="112"/>
   <object id="411" x="3200" y="336" height="64"/>
   <object id="412" x="3200" y="288" height="48"/>
+  <object id="422" x="0" y="288" width="448" height="16"/>
+  <object id="425" x="470.006" y="272.496" width="41.1684" height="14.703"/>
+  <object id="426" x="576" y="240" width="573.1" height="16.265"/>
  </objectgroup>
- <objectgroup id="23" name="daggers" locked="1">
-  <object id="416" x="256.578" y="256.98" width="16" height="16">
-   <ellipse/>
-  </object>
-  <object id="417" x="800" y="192" width="16" height="16">
-   <ellipse/>
-  </object>
-  <object id="418" x="1411.47" y="278.179" width="16" height="16">
-   <ellipse/>
-  </object>
-  <object id="419" x="2512" y="384" width="16" height="16">
-   <ellipse/>
-  </object>
-  <object id="420" x="2176" y="144" width="16" height="16">
-   <ellipse/>
-  </object>
+ <objectgroup id="24" name="staticEnemies">
+  <object id="427" x="302.921" y="253.07" width="16" height="16"/>
+  <object id="429" x="1759.59" y="399.445" width="16" height="16"/>
+  <object id="430" x="2080" y="144.124" width="16" height="16"/>
+  <object id="431" x="2496.98" y="226.515" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="25" name="diamonds">
+  <object id="432" x="1440" y="368" width="16" height="16"/>
+  <object id="433" x="1104" y="176" width="16" height="16"/>
+  <object id="436" x="800" y="208" width="16" height="16"/>
+  <object id="437" x="144" y="272" width="16" height="16"/>
+  <object id="439" x="2085.72" y="416" width="16" height="16"/>
+  <object id="440" x="2649.78" y="363.997" width="16" height="16"/>
  </objectgroup>
 </map>

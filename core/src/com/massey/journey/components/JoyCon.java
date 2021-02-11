@@ -1,4 +1,4 @@
-package com.massey.journey.scenes;
+package com.massey.journey.components;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -9,19 +9,15 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.massey.journey.Journey;
-
-import javax.print.attribute.standard.JobOriginatingUserName;
 
 public class JoyCon implements Disposable {
     public Stage stage;
     public OrthographicCamera cam;
     private Viewport vp;
-    boolean PressedJump, PressedLeft, PressedRight, PressedThrow;
+    boolean PressedJump, PressedLeft, PressedRight, PressedAttack;
 
     public JoyCon(SpriteBatch spriteBatch) {
         cam = new OrthographicCamera();
@@ -78,12 +74,12 @@ public class JoyCon implements Disposable {
         actionThrow.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                PressedThrow = true;
+                PressedAttack = true;
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                PressedThrow = false;
+                PressedAttack = false;
             }
         });
         table.bottom().left();
@@ -109,8 +105,8 @@ public class JoyCon implements Disposable {
     public boolean isPressJump() {
         return PressedJump;
     }
-    public boolean isPressThrow() {
-        return PressedThrow;
+    public boolean isPressAttack() {
+        return PressedAttack;
     }
 
     public void resize(int width, int height) {
