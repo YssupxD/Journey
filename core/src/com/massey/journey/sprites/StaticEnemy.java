@@ -1,12 +1,16 @@
 package com.massey.journey.sprites;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.massey.journey.main.Journey;
 import com.massey.journey.states.PlayState;
 import com.massey.journey.utilities.Box2dVariables;
 
@@ -14,7 +18,7 @@ import static com.massey.journey.utilities.Box2dVariables.PPM;
 
 public class StaticEnemy extends Enemy {
 
-    public enum State { IDLING, ATTACK_LEFT, ATTACK_RIGHT, GETTING_HIT }
+    public enum State { IDLING, ATTACK_LEFT, ATTACK_RIGHT }
 
     public State currentState;
     public State previousState;
@@ -74,9 +78,25 @@ public class StaticEnemy extends Enemy {
     }
 
     public void update(float dt){
-        setPosition(b2body.getPosition().x - getWidth() / 2,
-                b2body.getPosition().y - getHeight() / 4);
-        setRegion(getFrame(dt));
+        stateTime += dt;
+        if(setToDestroy && !destroyed){
+            world.destroyBody(b2body);
+            destroyed = true;
+            setRegion(hit.getKeyFrame(stateTime));
+            Journey.res.getSound("hit").play();
+            stateTime = 0;
+        }
+        else if(!destroyed){
+            setPosition(b2body.getPosition().x - getWidth() / 2,
+                    b2body.getPosition().y - getHeight() / 4);
+            setRegion(getFrame(dt));
+        }
+    }
+
+    public void draw(Batch batch) {
+        if(!destroyed || stateTime < 1) {
+            super.draw(batch);
+        }
     }
 
     public TextureRegion getFrame(float deltaTime) {
@@ -88,9 +108,6 @@ public class StaticEnemy extends Enemy {
                 break;
             case ATTACK_RIGHT:
                 region = attackRight.getKeyFrame(stateTime, true);
-                break;
-            case GETTING_HIT:
-                region = hit.getKeyFrame(stateTime);
                 break;
             case IDLING:
             default:
@@ -128,7 +145,7 @@ public class StaticEnemy extends Enemy {
 
         FixtureDef fdef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(12 / PPM, 22 / PPM);
+        shape.setAsBox(12 / PPM, 20 / PPM);
 
         fdef.shape = shape;
         fdef.filter.categoryBits = Box2dVariables.BIT_ENEMY;
@@ -139,6 +156,13 @@ public class StaticEnemy extends Enemy {
 
     @Override
     public void hitBySword() {
+        if(Gdx.input.isKeyPressed(Input.Keys.J)){
+            setToDestroy = true;
+        }
+    }
+
+    @Override
+    public void collectedByPlayer() {
 
     }
 }

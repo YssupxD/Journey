@@ -18,7 +18,7 @@ public class Hud {
     public Integer diamondCounter;
     public Integer hpCounter;
 
-    private Label countdownLabel;
+    private Label diamondCounterLabel;
     private Label hpLabel;
     private Label diamondLabel;
     private Label levelLabel;
@@ -40,7 +40,7 @@ public class Hud {
         //table is now size of the stage;
         table.setFillParent(true);
 
-        countdownLabel = new Label(String.format("%02d", diamondCounter),
+        diamondCounterLabel = new Label(String.format("%02d", diamondCounter),
                 new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         hpLabel = new Label("HP " + String.format("%03d", hpCounter),
                 new Label.LabelStyle(new BitmapFont(), Color.WHITE));
@@ -55,13 +55,13 @@ public class Hud {
         table.row();
         table.add(hpLabel).expandX();
         table.add(levelLabel).expandX();
-        table.add(countdownLabel).expandX();
+        table.add(diamondCounterLabel).expandX();
 
         stage.addActor(table);
     }
     public void addDiamond(int value) {
         diamondCounter += value;
-        diamondLabel.setText(String.format("%02d", diamondCounter));
+        diamondCounterLabel.setText(String.format("%02d", diamondCounter));
     }
 
     public void loseHP(int value) {

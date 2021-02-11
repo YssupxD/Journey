@@ -19,4 +19,6 @@ public abstract class Enemy extends Sprite {
 
     protected abstract void defineEnemy();
     public abstract void hitBySword();
+    public abstract void collectedByPlayer();
+    public abstract void update(float dt);
 }

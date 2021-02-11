@@ -24,6 +24,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.massey.journey.components.Hud;
 import com.massey.journey.components.JoyCon;
 import com.massey.journey.main.Journey;
+import com.massey.journey.sprites.Enemy;
 import com.massey.journey.sprites.StaticEnemy;
 import com.massey.journey.utilities.Box2dVariables;
 import com.massey.journey.utilities.GameStateManager;
@@ -38,6 +39,7 @@ public class PlayState extends GameState {
     private boolean debug = true;
 
     private TextureAtlas atlas;
+    private TextureAtlas atlas2;
 
     //Box2d variables
     private World world;
@@ -46,13 +48,22 @@ public class PlayState extends GameState {
     private Viewport gamePort;
 
     private Gino gino;
-    private StaticEnemy staticEnemy;
+
+    private Array<StaticEnemy> staticEnemies;
+
+    public Array<StaticEnemy> getStaticEnemies() {
+        return staticEnemies;
+    }
+
+    private Array<Diamond> diamonds;
+
+    public Array<Diamond> getDiamonds() {
+        return diamonds;
+    }
 
     //Tiled map variables
     private TiledMap tiledMap;
     private OrthogonalTiledMapRenderer tmRenderer;
-
-    private Array<Diamond> diamonds;
 
     //basic game screen variables
     private Hud hud;
@@ -70,18 +81,13 @@ public class PlayState extends GameState {
 
         //load texture pack atlas
         atlas = new TextureAtlas("Texture Pack.atlas");
+        atlas2 = new TextureAtlas("Diamond.atlas");
 
         //create player
         gino = new Gino(world, this);
 
-        //create enemies
-        staticEnemy = new StaticEnemy(world, this, 70 / PPM, 210 / PPM);
-
-        //create level graphics
+        //create level graphics and items and graphics
         createWorld();
-
-        //TODO: create diamonds
-        //createDiamonds();
 
         //create game HUD for game info.
         hud = new Hud(batch);
@@ -102,6 +108,8 @@ public class PlayState extends GameState {
     public TextureAtlas getAtlas() {
         return atlas;
     }
+
+    public TextureAtlas getAtlas2() { return atlas2; }
 
     public JoyCon getJoyCon() { return joyCon; }
 
@@ -140,14 +148,19 @@ public class PlayState extends GameState {
 
         gino.update(deltaTime);
 
-        staticEnemy.update(deltaTime);
+        for(Enemy e : getStaticEnemies()) {
+            e.update(deltaTime);
+        }
+
+        for(Enemy d : getDiamonds()) {
+            d.update(deltaTime);
+        }
 
         if(gino.b2body.getPosition().y < 0) {
             Journey.res.getSound("gameover").play();
             Journey.res.getMusic("TownTheme").stop();
             gsm.setState(GameStateManager.OVER);
         }
-        //TODO: update diamonds
     }
 
     public void render() {
@@ -168,10 +181,14 @@ public class PlayState extends GameState {
         batch.setProjectionMatrix(gameCam.combined);
         batch.begin();
         gino.draw(batch);
-        staticEnemy.draw(batch);
+        for(Enemy e : getStaticEnemies()) {
+            e.draw(batch);
+        }
+        for(Enemy d : getDiamonds()) {
+            d.draw(batch);
+        }
         batch.end();
 
-        //TODO: draw diamond
 
         //draw HUD
         batch.setProjectionMatrix(hud.stage.getCamera().combined);
@@ -230,35 +247,21 @@ public class PlayState extends GameState {
             fixtureDef.filter.maskBits = Box2dVariables.BIT_PLAYER | Box2dVariables.BIT_ENEMY;
             body.createFixture(fixtureDef).setUserData("Ground");
         }
-    }
-    //TODO: Define diamond
-    /*private void createDiamonds() {
+
+        //create all static Enemies
+        staticEnemies = new Array<StaticEnemy>();
+        for(MapObject object :
+                tiledMap.getLayers().get(8).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+            staticEnemies.add(new StaticEnemy(world, this, rect.getX() / PPM, rect.getY() / PPM));
+        }
+
+        //create all diamonds
         diamonds = new Array<Diamond>();
-
-        MapLayer ml = tiledMap.getLayers().get("diamonds");
-        if(ml == null) {
-            return;
+        for(MapObject object :
+                tiledMap.getLayers().get(9).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+            diamonds.add(new Diamond(world, this, rect.getX() / PPM, rect.getY() / PPM));
         }
-
-        for(MapObject mo : ml.getObjects()) {
-            BodyDef diamondBdef = new BodyDef();
-            diamondBdef.type = BodyDef.BodyType.StaticBody;
-            float x = (float) mo.getProperties().get("x") / PPM;
-            float y = (float) mo.getProperties().get("y") / PPM;
-            diamondBdef.position.set(x, y);
-            Body body = world.createBody(diamondBdef);
-            FixtureDef cfdef = new FixtureDef();
-            CircleShape circleShape = new CircleShape();
-            circleShape.setRadius(8 / PPM);
-            cfdef.shape = circleShape;
-            cfdef.isSensor = true;
-            cfdef.filter.categoryBits = Box2dVariables.BIT_DIAMOND;
-            cfdef.filter.maskBits = Box2dVariables.BIT_PLAYER;
-            body.createFixture(cfdef).setUserData("Dagger");
-            Diamond diamond = new Diamond(body);
-            body.setUserData(diamond);
-            diamonds.add(diamond);
-            circleShape.dispose();
-        }
-    }*/
+    }
 }

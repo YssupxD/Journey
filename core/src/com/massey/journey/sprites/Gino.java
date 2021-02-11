@@ -177,7 +177,7 @@ public class Gino extends Sprite {
         else if(b2body.getLinearVelocity().y < 0) {
             return State.FALLING;
         }
-        else if((runThrowAnimation && Gdx.input.isKeyPressed(Input.Keys.J)) || screen.getJoyCon
+        else if((Gdx.input.isKeyPressed(Input.Keys.J)) || screen.getJoyCon
         ().isPressAttack()){
             return State.ATTACKING;
         }
@@ -205,23 +205,16 @@ public class Gino extends Sprite {
 
         shape.setAsBox(10 / PPM, 8 / PPM, new Vector2(18 / PPM, 0), 0);
         fdef.shape = shape;
+        fdef.isSensor = true;
         fdef.filter.categoryBits = Box2dVariables.BIT_SWORD;
         fdef.filter.maskBits = Box2dVariables.BIT_ENEMY;
-        fdef.isSensor = true;
         b2body.createFixture(fdef).setUserData("sword");
 
         shape.setAsBox(-10 / PPM, 8 / PPM, new Vector2(-18 / PPM, 0), 0);
         fdef.shape = shape;
+        fdef.isSensor = true;
         fdef.filter.categoryBits = Box2dVariables.BIT_SWORD;
         fdef.filter.maskBits = Box2dVariables.BIT_ENEMY;
-        fdef.isSensor = true;
         b2body.createFixture(fdef).setUserData("sword");
-    }
-
-    public void hitByEnemy() {
-        screen.getHud().loseHP(100);
-        Journey.res.getSound("gameover").play();
-        Journey.res.getMusic("TownTheme").stop();
-        screen.getGsm().setState(GameStateManager.OVER);
     }
 }
