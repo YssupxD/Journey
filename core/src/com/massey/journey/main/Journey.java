@@ -14,6 +14,8 @@ public class Journey implements ApplicationListener {
 	public static final String TITLE = "Journey";
 	public static final int WORLD_WIDTH = 400;
 	public static final int WORLD_HEIGHT = 200;
+	public static final int PHONE_WIDTH = 1920;
+	public static final int PHONE_HEIGHT = 1080;
 	public static final int SCALE = 2;
 	public static final float STEP = 1 / 60f;
 

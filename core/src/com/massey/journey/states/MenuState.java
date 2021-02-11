@@ -10,21 +10,26 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.massey.journey.main.Journey;
 import com.massey.journey.utilities.GameStateManager;
 
+import static com.massey.journey.main.Journey.WORLD_HEIGHT;
+import static com.massey.journey.main.Journey.WORLD_WIDTH;
+import static com.massey.journey.main.Journey.SCALE;
+
 public class MenuState extends GameState {
 
     private static final float FONT_SCALE = 1.5f;
+    private static final float FONT_SCALE_PHONE = 2.5f;
 
     private static final float TITLE_WIDTH = 350 * FONT_SCALE;
     private static final float TITLE_HEIGHT = 50 * FONT_SCALE;
-    private static final float TITLE_Y = 230;
+    private static final float TITLE_Y = 300;
 
     private static final float PLAY_BUTTON_WIDTH = 110 * FONT_SCALE;
     private static final float PLAY_BUTTON_HEIGHT = 25 * FONT_SCALE;
-    private static final float PLAY_BUTTON_Y = 160;
+    private static final float PLAY_BUTTON_Y = 200;
 
     private static final float QUIT_BUTTON_WIDTH = 110 * FONT_SCALE;
     private static final float QUIT_BUTTON_HEIGHT = 25 * FONT_SCALE;
-    private static final float QUIT_BUTTON_Y = 110;
+    private static final float QUIT_BUTTON_Y = 150;
 
     //Title Texture
     Texture title;
@@ -74,12 +79,12 @@ public class MenuState extends GameState {
 
         batch.begin();
 
-        batch.draw(title, (Journey.WORLD_WIDTH * Journey.SCALE) / 2 - TITLE_WIDTH / 2, TITLE_Y,
+        batch.draw(title, WORLD_WIDTH * SCALE / 2 - TITLE_WIDTH / 2, TITLE_Y,
                 TITLE_WIDTH,
                 TITLE_HEIGHT);
 
-        float x = Journey.WORLD_WIDTH * Journey.SCALE / 2 - PLAY_BUTTON_WIDTH / 2;
-        if(Gdx.input.getX() < x + PLAY_BUTTON_WIDTH && Gdx.input.getX() > x && Journey.WORLD_HEIGHT * Journey.SCALE - Gdx.input.getY() < PLAY_BUTTON_Y + PLAY_BUTTON_HEIGHT && Journey.WORLD_HEIGHT * Journey.SCALE - Gdx.input.getY() > PLAY_BUTTON_Y){
+        float x = WORLD_WIDTH * SCALE / 2 - PLAY_BUTTON_WIDTH / 2;
+        if(Gdx.input.getX() < x + PLAY_BUTTON_WIDTH && Gdx.input.getX() > x && WORLD_HEIGHT * SCALE - Gdx.input.getY() < PLAY_BUTTON_Y + PLAY_BUTTON_HEIGHT && WORLD_HEIGHT * SCALE - Gdx.input.getY() > PLAY_BUTTON_Y){
             batch.draw(playButtonSelected, x, PLAY_BUTTON_Y, PLAY_BUTTON_WIDTH,
                     PLAY_BUTTON_HEIGHT);
             if(Gdx.input.isTouched()) {
@@ -91,7 +96,7 @@ public class MenuState extends GameState {
         }
 
         x = Journey.WORLD_WIDTH * Journey.SCALE / 2 - QUIT_BUTTON_WIDTH / 2;
-        if(Gdx.input.getX() < x + QUIT_BUTTON_WIDTH && Gdx.input.getX() > x && Journey.WORLD_HEIGHT * Journey.SCALE - Gdx.input.getY() < QUIT_BUTTON_Y + QUIT_BUTTON_HEIGHT && Journey.WORLD_HEIGHT * Journey.SCALE - Gdx.input.getY() > QUIT_BUTTON_Y){
+        if(Gdx.input.getX() < x + QUIT_BUTTON_WIDTH && Gdx.input.getX() > x && WORLD_HEIGHT * SCALE - Gdx.input.getY() < QUIT_BUTTON_Y + QUIT_BUTTON_HEIGHT && WORLD_HEIGHT * SCALE- Gdx.input.getY() > QUIT_BUTTON_Y){
             batch.draw(quitButtonSelected, x, QUIT_BUTTON_Y, QUIT_BUTTON_WIDTH,
                     QUIT_BUTTON_HEIGHT);
             if(Gdx.input.isTouched()) {

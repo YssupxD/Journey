@@ -36,7 +36,7 @@ import static com.massey.journey.utilities.Box2dVariables.PPM;
 
 public class PlayState extends GameState {
 
-    private boolean debug = true;
+    private boolean debug = false;
 
     private TextureAtlas atlas;
     private TextureAtlas atlas2;
