@@ -1,11 +1,15 @@
-package com.massey.journey.Utils;
+package com.massey.journey.utilities;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.utils.Array;
+import com.massey.journey.sprites.Enemy;
+import com.massey.journey.sprites.Gino;
 
 public class MyContactListener implements com.badlogic.gdx.physics.box2d.ContactListener {
 
@@ -22,16 +26,15 @@ public class MyContactListener implements com.badlogic.gdx.physics.box2d.Contact
         Fixture fa = contact.getFixtureA();
         Fixture fb = contact.getFixtureB();
 
+        int fc = fa.getFilterData().categoryBits | fb.getFilterData().categoryBits;
 
-        if(fa == null || fb == null) {
-            return;
-        }
-
-        if(fa.getUserData() != null && fa.getUserData().equals("dagger")) {
-            bodiesToRemove.add(fa.getBody());
-        }
-        if(fb.getUserData() != null && fb.getUserData().equals("dagger")) {
-            bodiesToRemove.add(fb.getBody());
+        switch (fc) {
+            case (Box2dVariables.BIT_ENEMY | Box2dVariables.BIT_SWORD):
+                if (fa.getFilterData().categoryBits == Box2dVariables.BIT_ENEMY) {
+                    ((Enemy) fa.getUserData()).hitBySword();
+                } else if (fb.getFilterData().categoryBits == Box2dVariables.BIT_ENEMY) {
+                    ((Enemy) fb.getUserData()).hitBySword();
+                }
         }
     }
 

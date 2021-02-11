@@ -1,4 +1,4 @@
-package com.massey.journey.Utils;
+package com.massey.journey.utilities;
 
 public class Box2dVariables {
 
@@ -8,9 +8,8 @@ public class Box2dVariables {
     //collision filtering bits
     public static final short BIT_PLAYER = 2;
     public static final short BIT_GROUND = 4;
-    public static final short BIT_DAGGER = 8;
+    public static final short BIT_DIAMOND = 8;
     public static final short BIT_ENEMY = 16;
-    public static final short BIT_BULLET = 32;
-
+    public static final short BIT_SWORD = 32;
 
 }
